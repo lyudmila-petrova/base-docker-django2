@@ -1,5 +1,12 @@
 version: '3.6'
 
+volumes:
+  database_data:
+    driver: local
+
+networks:
+  net:
+
 services:
   web:
     hostname: web
@@ -14,6 +21,19 @@ services:
       - 8000:8000
     networks:
     - net
+    depends_on:
+    - db
 
-networks:
-  net:
+  db:
+    image: postgres:10.1
+    restart: always
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pw
+    ports:
+    - 5432:5432
+    volumes:
+    - database_data:/var/lib/postgresql/data
+    networks:
+    - net
